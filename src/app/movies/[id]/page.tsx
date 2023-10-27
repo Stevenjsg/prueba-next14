@@ -2,6 +2,7 @@ import { type Movie } from "@/app/movie.type"
 import { getMovisById } from "@/services/Movies"
 import { Average } from "next/font/google"
 import Image from "next/image"
+
 import React from "react"
 
 const average = Average({ weight: "400", subsets: ["latin"] })

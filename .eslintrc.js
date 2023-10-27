@@ -38,7 +38,6 @@ module.exports = {
       "warn",
       {
         semi: false,
-        EndOfLine: "lf",
         plugins: ["prettier-plugin-tailwindcss"],
       },
     ],
