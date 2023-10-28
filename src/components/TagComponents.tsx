@@ -6,8 +6,10 @@ interface Props {
 }
 
 function TagComponents({ data }: Props) {
+  if (data.length === 0) return null
   const color =
-    (data[0] as ProductionCompany).origin_country !== undefined
+    (data[0] as ProductionCompany).origin_country !== undefined &&
+    data.length > 1
       ? "bg-blue-500"
       : "bg-green-500"
 
