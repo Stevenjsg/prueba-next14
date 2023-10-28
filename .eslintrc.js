@@ -38,6 +38,7 @@ module.exports = {
       "warn",
       {
         semi: false,
+        PrintWidth: 120,
         plugins: ["prettier-plugin-tailwindcss"],
       },
     ],

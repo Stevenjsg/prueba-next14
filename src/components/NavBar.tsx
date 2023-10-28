@@ -12,6 +12,9 @@ export default function NavBar() {
             </span>
           </BackButtom>
         </li>
+        <li>Popular</li>
+        <li>Top Rated</li>
+        <li>Upcoming</li>
         <li>
           <SearchForm />
         </li>

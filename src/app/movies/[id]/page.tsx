@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from "next"
 import { type Movie } from "@/app/movie.type"
 import TagComponents from "@/components/TagComponents"
 import { getMovisById } from "@/services/Movies"
@@ -11,6 +12,18 @@ const average = Average({ weight: "400", subsets: ["latin"] })
 interface Props {
   params: {
     id: string
+  }
+}
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { id } = params
+  const results = (await getMovisById({ movieId: id })) as Movie
+
+  return {
+    title: results.title,
+    description: results.overview,
   }
 }
 
