@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import SearchIcon from "@/icon/searchIcon"
-import { findMovie } from "@/services/Movies"
 import { stringToSlug } from "@/services/utils"
 import { redirect } from "next/navigation"
 
@@ -15,7 +14,7 @@ export default function SearchForm() {
     return redirect(`/search/${newQuery}`)
   }
   return (
-    <form method="POST" action={create} className="inline-flex items-center">
+    <form action={create} className="inline-flex items-center">
       <input
         className="mx-2 w-auto rounded border px-2 py-2 placeholder:text-black/30 dark:border-none dark:placeholder:text-white/30"
         type="text"
