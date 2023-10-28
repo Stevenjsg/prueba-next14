@@ -35,7 +35,7 @@ async function MoviPage({ params }: Props) {
     <main className="flex flex-col place-content-center py-4">
       <section className="relative mx-auto grid w-[80%]  grid-cols-1 gap-x-2 overflow-y-hidden md:grid-cols-2">
         <aside className="relative flex flex-col">
-          <picture className="relative block h-[500px] w-auto lg:h-[600px]">
+          <picture className="animate-fade-in relative block h-[500px] w-auto lg:h-[600px]">
             <Image
               fill
               sizes="100vw"
