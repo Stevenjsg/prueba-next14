@@ -49,12 +49,12 @@ export interface Movie {
 }
 
 export interface Genre {
-  id: number
+  id?: number
   name: string
 }
 
 export interface ProductionCompany {
-  id: number
+  id?: number
   logo_path: null | string
   name: string
   origin_country: string

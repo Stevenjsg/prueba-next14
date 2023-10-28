@@ -32,7 +32,7 @@ function ListMovies({ dataMovies }: Props) {
             alt={movie.title}
           />
           <div className="text-balance absolute bottom-0 z-[1] w-full bg-slate-800/25 px-1 py-2 text-center text-xl font-bold">
-            {movie.title}
+            <p className="text-white">{movie.title}</p>
           </div>
         </Link>
       ))}
