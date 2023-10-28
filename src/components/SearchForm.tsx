@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
+import SearchIcon from "@/icon/searchIcon"
 import { findMovie } from "@/services/Movies"
 import { stringToSlug } from "@/services/utils"
 import { redirect } from "next/navigation"
@@ -14,15 +15,15 @@ export default function SearchForm() {
     return redirect(`/search/${newQuery}`)
   }
   return (
-    <form method="POST" action={create}>
+    <form method="POST" action={create} className="inline-flex items-center">
       <input
-        className="mx-2 rounded border px-2 py-2 placeholder:text-black/30 dark:border-none dark:placeholder:text-white/30"
+        className="mx-2 w-auto rounded border px-2 py-2 placeholder:text-black/30 dark:border-none dark:placeholder:text-white/30"
         type="text"
         name="query"
         placeholder="Matrix, Interstellar..."
       />
-      <button className="rounded  bg-slate-200 px-2 py-1 hover:bg-slate-50/25  dark:bg-slate-50/10">
-        Buscar
+      <button className="rounded  bg-slate-200 px-2 py-1 hover:bg-slate-50/25  hover:text-red-300 dark:bg-slate-50/10">
+        <SearchIcon />
       </button>
     </form>
   )
