@@ -15,7 +15,20 @@ export async function getTrendingFilms() {
   const data = await response.json()
   return data
 }
-
+export async function getPopularFilms() {
+  const response = await fetch(`${TMDB_URL}/movie/popular?language=es-Es`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: auth,
+    },
+    next: {
+      revalidate: 3600 * 24,
+    },
+  })
+  const data = await response.json()
+  return data
+}
 export async function getMovisById({ movieId }: { movieId: string }) {
   return await fetch(`${TMDB_URL}movie/${movieId}?language=es-Es`, {
     method: "GET",
