@@ -1,3 +1,8 @@
+import { type MenuCategories } from "../constant"
+export type typeCategory = keyof typeof MenuCategories
+export interface ResponseMovies {
+  results: Movies[]
+}
 export interface Movies {
   adult: boolean
   backdrop_path: string

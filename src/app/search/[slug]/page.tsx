@@ -1,4 +1,3 @@
-import { type Movies } from "@/app/movie.type"
 import ListMovies from "@/components/ListMovies"
 import MovieNotFound from "@/components/MovieNotFound"
 import { findMovie } from "@/services/Movies"

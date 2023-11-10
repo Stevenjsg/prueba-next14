@@ -29,6 +29,7 @@ module.exports = {
   plugins: ["react", "@typescript-eslint", "prettier", "tailwindcss"],
   rules: {
     semi: "off",
+    "@next/next/no-img-element": "off",
     "no-console": "warn",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-unused-vars": "off",
@@ -39,8 +40,9 @@ module.exports = {
       {
         semi: false,
         PrintWidth: 120,
+        endOfLine: "auto",
         plugins: ["prettier-plugin-tailwindcss"],
       },
     ],
   },
-}
+};

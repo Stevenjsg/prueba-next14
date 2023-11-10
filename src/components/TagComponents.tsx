@@ -1,4 +1,4 @@
-import { type Genre, type ProductionCompany } from "@/app/movie.type"
+import { type Genre, type ProductionCompany } from "@/types/movie.type"
 import React from "react"
 
 interface Props {

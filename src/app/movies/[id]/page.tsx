@@ -1,11 +1,13 @@
 import type { Metadata, ResolvingMetadata } from "next"
-import { type Movie } from "@/app/movie.type"
+import { type Movie } from "@/types/movie.type"
 import TagComponents from "@/components/TagComponents"
 import { getMovisById } from "@/services/Movies"
 import { Average } from "next/font/google"
 import Image from "next/image"
 
 import React from "react"
+import { formatDate } from "@/services/utils"
+import CardsCredits from "@/components/CardsCredits"
 
 const average = Average({ weight: "400", subsets: ["latin"] })
 
@@ -22,7 +24,7 @@ export async function generateMetadata(
   const results = (await getMovisById({ movieId: id })) as Movie
 
   return {
-    title: results.title,
+    title: `FC | ${results.title}`,
     description: results.overview,
   }
 }
@@ -30,16 +32,14 @@ export async function generateMetadata(
 async function MoviPage({ params }: Props) {
   const { id } = params
   const data = (await getMovisById({ movieId: id })) as Movie
-  const year = new Date(data.release_date).getFullYear()
+  const year = formatDate(data.release_date)
   return (
-    <main className="flex flex-col place-content-center py-4">
-      <section className="relative mx-auto grid w-[80%]  grid-cols-1 gap-x-2 overflow-y-hidden md:grid-cols-2">
+    <main className="flex min-h-[calc(100vh-180px)] flex-col place-content-center py-4">
+      <section className="relative mx-auto grid w-[80%] grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-2 overflow-y-hidden">
         <aside className="relative flex flex-col">
-          <picture className="animate-fade-in relative block h-[500px] w-auto lg:h-[600px]">
-            <Image
-              fill
-              sizes="100vw"
-              style={{ objectFit: "contain" }}
+          <picture className="relative block h-[500px] w-auto animate-fade-in lg:h-[600px]">
+            <img
+              className="absolute inset-0 h-full w-full object-contain"
               src={`https://image.tmdb.org/t/p/w500/${data.poster_path}`}
               alt={data.title}
             />
@@ -58,10 +58,11 @@ async function MoviPage({ params }: Props) {
           <h2 className="text-balance text-center text-2xl font-semibold tracking-tight text-black/40 dark:text-white/40 md:text-2xl">
             {data.tagline}
           </h2>
-          <p className="font-semibold opacity-40">{year}</p>
+          <p className="font-semibold opacity-40">{`${data.status} - ${year}`}</p>
           <p className={`${average.className} text-base md:text-lg lg:text-xl`}>
             {data.overview}
           </p>
+          <CardsCredits id={data.id} />
         </article>
       </section>
     </main>

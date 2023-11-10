@@ -12,3 +12,11 @@ export function stringToSlug(text: string) {
 export function slugToString(slug: string) {
   return slug.toString().toLowerCase().replace(/-/g, " ")
 }
+
+export function formatDate(date: Date) {
+  const newDate = new Date(date)
+  const day = newDate.getDate().toString().padStart(2, "0")
+  const month = newDate.getMonth().toString().padStart(2, "0")
+  const year = newDate.getFullYear()
+  return `${day}/${month}/${year}`
+}

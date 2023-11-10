@@ -1,4 +1,5 @@
 "use client"
+import { MenuCategories } from "@/constant"
 import MenuOpen from "@/icon/MenuOpen"
 import Menu from "@/icon/menu"
 import Link from "next/link"
@@ -22,15 +23,14 @@ function ScrollMenu() {
       </button>
       <div className={className}>
         <ul className="flex flex-col font-medium text-white ">
-          <li className="rounded px-4 py-1 hover:bg-gray-50/20  hover:text-red-300">
-            <Link href="/">Popular</Link>
-          </li>
-          <li className="rounded px-4  py-1 hover:bg-gray-50/20  hover:text-red-300">
-            <Link href="/">Top Rated</Link>
-          </li>
-          <li className="rounded px-4 py-1 hover:bg-gray-50/20 hover:text-red-300 ">
-            <Link href="/">Upcoming</Link>
-          </li>
+          {Object.entries(MenuCategories).map((items) => (
+            <li
+              key={items[0]}
+              className="rounded px-4 py-1 hover:bg-gray-50/20  hover:text-red-300"
+            >
+              <Link href={`/?t=${items[0].toLowerCase()}`}>{items[1]}</Link>
+            </li>
+          ))}
         </ul>
       </div>
     </div>

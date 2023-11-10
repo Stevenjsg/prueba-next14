@@ -1,5 +1,6 @@
 "use server"
 import { TMDB_URL, auth } from "@/constant"
+import { type Credits } from "@/types/credits"
 
 export async function getTrendingFilms() {
   const response = await fetch(`${TMDB_URL}trending/movie/day?language=es-Es`, {
@@ -56,5 +57,18 @@ export async function findMovie({ query }: { query: string }) {
     .then(async (response) => await response.json())
     .catch((error) => {
       console.log(error)
+    })
+}
+
+export async function getCreditsToIdMovie(movieId: number): Promise<Credits> {
+  return await fetch(`https://api.themoviedb.org/3/movie/${movieId}/credits`, {
+    method: "GET",
+    headers: {
+      Authorization: auth,
+    },
+  })
+    .then(async (response) => await response.json())
+    .catch((error) => {
+      console.error(error)
     })
 }
