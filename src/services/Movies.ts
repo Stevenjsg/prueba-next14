@@ -9,9 +9,6 @@ export async function getTrendingFilms() {
       accept: "application/json",
       Authorization: auth,
     },
-    next: {
-      revalidate: 3600 * 24,
-    },
   })
   const data = await response.json()
   return data
@@ -22,9 +19,6 @@ export async function getPopularFilms() {
     headers: {
       accept: "application/json",
       Authorization: auth,
-    },
-    next: {
-      revalidate: 3600 * 24,
     },
   })
   const data = await response.json()
