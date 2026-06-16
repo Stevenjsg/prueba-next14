@@ -5,6 +5,7 @@ import {
 } from "@/services/Movies";
 import { type typeCategory, type ResponseMovies } from "../types/movie.type";
 import ListMovies from "@/components/ListMovies";
+import InfiniteMovies from "@/components/InfiniteMovies";
 
 interface Props {
   searchParams: {
@@ -36,7 +37,11 @@ export default async function Home({ searchParams }: Props) {
         </span>
         movies
       </h1>
-      <ListMovies dataMovies={data} />
+      <InfiniteMovies
+        key={category}
+        initialMovies={data.results}
+        category={category}
+      />
     </main>
   );
 }
