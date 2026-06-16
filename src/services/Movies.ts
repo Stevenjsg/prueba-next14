@@ -1,6 +1,6 @@
-"use server"
-import { TMDB_URL, auth } from "@/constant"
-import { type Credits } from "@/types/credits"
+"use server";
+import { TMDB_URL, auth } from "@/constant";
+import { type Credits } from "@/types/credits";
 
 export async function getTrendingFilms() {
   const response = await fetch(`${TMDB_URL}trending/movie/day?language=es-Es`, {
@@ -9,9 +9,9 @@ export async function getTrendingFilms() {
       accept: "application/json",
       Authorization: auth,
     },
-  })
-  const data = await response.json()
-  return data
+  });
+  const data = await response.json();
+  return data;
 }
 export async function getPopularFilms() {
   const response = await fetch(`${TMDB_URL}/movie/popular?language=es-Es`, {
@@ -20,9 +20,9 @@ export async function getPopularFilms() {
       accept: "application/json",
       Authorization: auth,
     },
-  })
-  const data = await response.json()
-  return data
+  });
+  const data = await response.json();
+  return data;
 }
 export async function getMovisById({ movieId }: { movieId: string }) {
   return await fetch(`${TMDB_URL}movie/${movieId}?language=es-Es`, {
@@ -34,8 +34,8 @@ export async function getMovisById({ movieId }: { movieId: string }) {
   })
     .then(async (response) => await response.json())
     .catch((error) => {
-      console.log(error)
-    })
+      console.log(error);
+    });
 }
 export async function findMovie({ query }: { query: string }) {
   return await fetch(
@@ -50,8 +50,8 @@ export async function findMovie({ query }: { query: string }) {
   )
     .then(async (response) => await response.json())
     .catch((error) => {
-      console.log(error)
-    })
+      console.log(error);
+    });
 }
 
 export async function getCreditsToIdMovie(movieId: number): Promise<Credits> {
@@ -63,6 +63,17 @@ export async function getCreditsToIdMovie(movieId: number): Promise<Credits> {
   })
     .then(async (response) => await response.json())
     .catch((error) => {
-      console.error(error)
-    })
+      console.error(error);
+    });
+}
+export async function getTopRatedFilms() {
+  const response = await fetch(`${TMDB_URL}/movie/top_rated?language=es-Es`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: auth,
+    },
+  });
+  const data = await response.json();
+  return data;
 }

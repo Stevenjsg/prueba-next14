@@ -1,30 +1,30 @@
-import { type ResponseMovies, type Movies } from "@/types/movie.type"
-import Link from "next/link"
-import React from "react"
-import MovieNotFound from "./MovieNotFound"
+import { type ResponseMovies, type Movies } from "@/types/movie.type";
+import Link from "next/link";
+import React from "react";
+import MovieNotFound from "./MovieNotFound";
 
 interface Props {
   dataMovies: {
-    results: Movies[]
-  }
+    results: Movies[];
+  };
 }
 
 function ListMovies({ dataMovies }: Props) {
-  const { results: movies } = dataMovies as ResponseMovies
+  const { results: movies } = dataMovies as ResponseMovies;
   if (movies === undefined || movies.length === 0) {
-    return <MovieNotFound />
+    return <MovieNotFound />;
   }
-  const filterMovies = movies.filter((movie) => movie.poster_path)
+  const filterMovies = movies.filter((movie) => movie.poster_path);
   return (
     <section className="grid w-full grid-cols-[repeat(auto-fill,minmax(200px,300px))] place-content-center gap-y-2">
       {filterMovies.map((movie) => (
         <Link
           href={`/movies/${movie.id}`}
           key={movie.id}
-          className="relative mx-auto flex h-96 w-64 flex-col items-center justify-center rounded border border-gray-200/20 hover:animate-colorChange hover:border"
+          className="relative mx-auto flex w-64 aspect-[2/3] flex-col items-center justify-center rounded border border-gray-200/20 hover:animate-colorChange hover:border"
         >
           <img
-            className="absolute inset-0 h-full w-full object-contain"
+            className="absolute inset-0 h-full w-full object-cover transition-all duration-300 hover:scale-105 rounded"
             src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
             alt={movie.title}
           />
@@ -34,7 +34,7 @@ function ListMovies({ dataMovies }: Props) {
         </Link>
       ))}
     </section>
-  )
+  );
 }
 
-export default ListMovies
+export default ListMovies;

@@ -1,20 +1,23 @@
-"use client"
-import { MenuCategories } from "@/constant"
-import MenuOpen from "@/icon/MenuOpen"
-import Menu from "@/icon/menu"
-import Link from "next/link"
-import { useState } from "react"
+"use client";
+import { MenuCategories } from "@/constant";
+import MenuOpen from "@/icon/MenuOpen";
+import Menu from "@/icon/menu";
+import Link from "next/link";
+import { useState } from "react";
 
 function ScrollMenu() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   function handleClik() {
-    setIsOpen((prev) => !prev)
+    setIsOpen((prev) => !prev);
   }
   const className = `${
     isOpen ? "block animate-fade-in" : "animate-fade-out hidden"
-  } h-auto w-40 border border-white/20 bg-gray-900 rounded absolute z-10 py-2 px-0.5 bottom-o right-0 `
+  } h-auto w-40 border border-white/20 bg-gray-900 rounded absolute z-10 p-2 px-0.5 bottom-o right-0 `;
   return (
-    <div className="relative mb-2">
+    <div
+      id="scroll-menu"
+      className="relative mx-2 items-center justify-center "
+    >
       <button
         onClick={handleClik}
         className="flex h-10 w-10 items-center justify-center rounded bg-gray-400 text-black hover:text-white "
@@ -24,17 +27,20 @@ function ScrollMenu() {
       <div className={className}>
         <ul className="flex flex-col font-medium text-white ">
           {Object.entries(MenuCategories).map((items) => (
-            <li
-              key={items[0]}
-              className="rounded px-4 py-1 hover:bg-gray-50/20  hover:text-red-300"
-            >
-              <Link href={`/?t=${items[0].toLowerCase()}`}>{items[1]}</Link>
+            <li key={items[0]}>
+              <Link
+                href={`/?t=${items[0].toLowerCase()}`}
+                className="block rounded px-4 hover:bg-gray-50/20 hover:text-red-300
+                "
+              >
+                {items[1]}
+              </Link>
             </li>
           ))}
         </ul>
       </div>
     </div>
-  )
+  );
 }
 
-export default ScrollMenu
+export default ScrollMenu;
