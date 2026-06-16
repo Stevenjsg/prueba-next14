@@ -1,8 +1,4 @@
-export default function MenuOpen({
-  className = "",
-  size = 24,
-  color = "currentColor",
-}) {
+export default function MenuOpen({ className = "", size = 24, color = "currentColor" }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

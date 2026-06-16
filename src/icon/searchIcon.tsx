@@ -1,8 +1,4 @@
-export default function SearchIcon({
-  className = "",
-  size = 24,
-  color = "currentColor",
-}) {
+export default function SearchIcon({ className = "", size = 24, color = "currentColor" }) {
   return (
     <svg
       className={className}

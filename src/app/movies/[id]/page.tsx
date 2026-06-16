@@ -16,10 +16,7 @@ interface Props {
     id: string
   }
 }
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const { id } = params
   const results = (await getMovisById({ movieId: id })) as Movie
 
@@ -59,9 +56,7 @@ async function MoviPage({ params }: Props) {
             {data.tagline}
           </h2>
           <p className="font-semibold opacity-40">{`${data.status} - ${year}`}</p>
-          <p className={`${average.className} text-base md:text-lg lg:text-xl`}>
-            {data.overview}
-          </p>
+          <p className={`${average.className} text-base md:text-lg lg:text-xl`}>{data.overview}</p>
           <CardsCredits id={data.id} />
         </article>
       </section>

@@ -9,12 +9,8 @@ export default function MovieNotFound({ title }: Props) {
         <p className="text-4xl font-bold text-red-600">Error 404</p>
         {title !== undefined && (
           <>
-            <p className="text-2xl font-bold text-red-900 opacity-60">
-              No se ha encontrado resultados para:
-            </p>
-            <span className="text-lg font-semibold text-gray-400 opacity-60">
-              {title}
-            </span>
+            <p className="text-2xl font-bold text-red-900 opacity-60">No se ha encontrado resultados para:</p>
+            <span className="text-lg font-semibold text-gray-400 opacity-60">{title}</span>
           </>
         )}
       </div>

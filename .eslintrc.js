@@ -3,12 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    "standard-with-typescript",
-    "plugin:react/recommended",
-    "next/core-web-vitals",
-    "eslint-config-prettier",
-  ],
+  extends: ["standard-with-typescript", "plugin:react/recommended", "next/core-web-vitals", "eslint-config-prettier"],
   overrides: [
     {
       env: {
@@ -35,14 +30,6 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": "off",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": [
-      "warn",
-      {
-        semi: false,
-        PrintWidth: 120,
-        endOfLine: "auto",
-        plugins: ["prettier-plugin-tailwindcss"],
-      },
-    ],
+    "prettier/prettier": "warn",
   },
-};
+}

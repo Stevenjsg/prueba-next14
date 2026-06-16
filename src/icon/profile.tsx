@@ -1,10 +1,6 @@
 import React from "react"
 
-export default function ProfileIcon({
-  size = 24,
-  color = "currentColor",
-  className = "",
-}) {
+export default function ProfileIcon({ size = 24, color = "currentColor", className = "" }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
