@@ -9,7 +9,7 @@
 ## 1. Resumen
 
 FilmsCenter es una aplicación web de catálogo de películas construida sobre
-**Next.js 14 (App Router)**. Consume la API pública de **TMDB (The Movie DB)**
+**Next.js 16 (App Router, Turbopack)**. Consume la API pública de **TMDB (The Movie DB)**
 para listar películas (tendencia, populares, mejor valoradas), mostrar el
 detalle de cada película con sus créditos y permitir búsqueda por título. El
 listado principal implementa **scroll infinito** mediante Server Actions e
@@ -32,13 +32,14 @@ global de tematización (§8).
 
 | Capa | Tecnología | Versión declarada |
 |---|---|---|
-| Framework | Next.js | `14.0.0` |
-| UI | React / React DOM | `^18` |
+| Framework | Next.js (App Router, Turbopack) | `16.2.9` |
+| UI | React / React DOM | `^19.2` |
 | Lenguaje | TypeScript | `^5.2.2` |
 | Estilos | Tailwind CSS + autoprefixer + PostCSS | `^3` |
 | Estado global | Zustand | `^5.0.14` |
 | Extracción de color | Canvas API (cliente, sin dependencias) | — |
-| Lint/format | ESLint 8 + `eslint-config-standard-with-typescript` + Prettier | ver §7 |
+| Lint/format | ESLint 9 (flat config) + `eslint-config-next` + Prettier | ver §7 |
+| Runtime / gestor | Node ≥ 20.9 · pnpm 11 (fijado con `packageManager`) | — |
 
 ---
 
@@ -143,26 +144,29 @@ src/
 
 ## 7. Deuda técnica
 
-> Esta sección documenta el resultado de `pnpm audit` (2026-06-16) y el plan de
-> actualización. **Es la deuda más urgente del proyecto.**
+> ✅ **Resuelta (2026-06-17).** Las tres fases de actualización se completaron.
+> La app corre en **Next 16.2.9 / React 19.2** y `pnpm audit --prod` está
+> **limpio** (0 vulnerabilidades en lo que se despliega). Se conserva el historial
+> abajo como registro.
 
 ### 7.1 Resumen del audit
 
 ```
-46 vulnerabilidades:  1 critical · 18 high · 22 moderate · 5 low
+Antes (2026-06-16):  46 vulnerabilidades — 1 critical · 18 high · 22 moderate · 5 low
+Ahora  (2026-06-17):  pnpm audit --prod  → 0 vulnerabilidades
+                      pnpm audit (todo)  → 12 — 7 high · 4 moderate · 1 low (SOLO dev)
 ```
 
-La deuda se concentra en **dos focos**:
-
-1. **`next@14.0.0`** — desactualizado en ~2 años. Acumula 1 crítica, varias
-   altas y moderadas. Versión instalada: `14.0.0`. Último parche 14.x:
-   **`14.2.35`**. Último estable global: **`16.2.9`**.
-2. **Cadena de herramientas de lint** (`eslint@8` +
-   `eslint-config-standard-with-typescript@39` + `@typescript-eslint@6`) —
-   arrastra vulnerabilidades transitivas (ReDoS, prototype pollution) en
-   `braces`, `cross-spawn`, `minimatch`, `picomatch`, `flatted`,
-   `brace-expansion`, `js-yaml`, `babel`, etc. Son devDependencies (riesgo en
-   runtime ≈ nulo, pero ruido y deuda de mantenimiento).
+- **Runtime / producción: limpio.** Se cerró la crítica de middleware, todas las
+  high de `next` y las moderate residuales (XSS App Router, DoS `next/image`,
+  cache poisoning RSC). El postcss que bundlea Next se parchea con un `override`
+  a `^8.5.15` (cierra el XSS de postcss + el aviso de `nanoid`).
+- **Las 12 restantes son solo de desarrollo**, transitivas del propio toolchain
+  más reciente (`eslint-config-next@16`→`fast-glob`/`eslint-import-resolver`→
+  `braces`/`minimatch`/`picomatch`, `eslint@9`→`flatted`, `tailwindcss`→`yaml`).
+  Sin exposición en runtime; dependen de parches upstream. Deuda dev de baja
+  prioridad (forzarlas con overrides arriesga romper el linting de código no
+  desplegado).
 
 ### 7.2 Vulnerabilidades destacadas en `next` (dependencia directa, runtime)
 
@@ -182,32 +186,31 @@ La deuda se concentra en **dos focos**:
 > `next`**. Un puñado de advisories moderate/low restantes sólo cierran en la
 > rama **15.x** (`>=15.5.16`) o superior.
 
-### 7.3 Plan de actualización recomendado
+### 7.3 Plan de actualización (ejecutado)
 
-**Fase 1 — Parche de seguridad inmediato (bajo riesgo, mismo major):**
+**✅ Fase 1 — Parche de seguridad (`14.0.0 → 14.2.35`).** Cerró la crítica de
+middleware y todas las high de `next` sin cambios de código.
 
-```bash
-pnpm add next@14.2.35 eslint-config-next@14.2.35
-pnpm audit            # verificar que la crítica y las high de next desaparecen
-pnpm build            # 14.0 → 14.2 no tiene breaking changes relevantes
-```
-- Cierra la crítica de middleware + todas las high de `next`.
-- Sin cambios de código esperados (App Router, Server Actions y RSC ya en uso).
+**✅ Fase 2 — Salto a Next 16 (`14.2.35 → 15 → 16.2.9`), por etapas:**
+- **Etapa A (Next 15 + React 19):** `params`/`searchParams` migrados a async
+  (codemod `next-async-request-api`) en `Home`, `MoviPage`, `SearchMovies`;
+  caché explícita de `fetch` en `services/Movies.ts` (Next 15 ya no cachea por
+  defecto): `revalidate` 1 h listados, 1 día detalle/créditos, `no-store` búsqueda.
+- **Etapa B (Next 16):** Turbopack por defecto (sin webpack custom); `next.config`
+  ya compatible (quality 75, `remotePatterns`); `sharp` aprobado para el
+  optimizador. `tsconfig` actualizado por Next (`jsx: react-jsx`, `.next/dev/types`).
 
-**Fase 2 — Salto a major 15 / 16 (planificado, requiere QA):**
-- `next@15` / `next@16` cierran las moderate/low residuales (XSS App Router,
-  `next/image` DoS, cache poisoning RSC).
-- Breaking changes a revisar: `searchParams`/`params` pasan a ser **async**
-  (afecta `Home`, `MoviPage`, `SearchMovies`), caching por defecto cambia,
-  React 19 requerido en Next 15+.
-- Migrar con el codemod oficial: `npx @next/codemod@latest upgrade`.
+**✅ Fase 3 — Toolchain de lint (ESLint 9 flat config):**
+- `next lint` (eliminado en Next 16) → `eslint .`; nuevo `eslint.config.mjs` que
+  extiende los presets flat nativos de `eslint-config-next@16` (que ya traen
+  `typescript-eslint` v8, react, react-hooks, import, jsx-a11y) + Prettier.
+- Eliminado `eslint-config-standard-with-typescript` (deprecado) y plugins ya
+  redundantes; `eslint@9`. Borrados `.eslintrc.js` y `.eslintignore`.
 
-**Fase 3 — Toolchain de lint (limpia el ruido transitivo):**
-- `eslint-config-standard-with-typescript` está **deprecado** (renombrado a
-  `eslint-config-love`). Migrar a ESLint 9 (flat config) + `typescript-eslint`
-  v8, o reemplazar por la config recomendada de Next.
-- Esto elimina la mayoría de las 18 high / moderate transitivas
-  (`braces`, `cross-spawn`, `minimatch`, `picomatch`, `flatted`, ...).
+**Despliegue (Vercel):** se fija `pnpm@11` con el campo `packageManager` en
+`package.json` para que Vercel use la misma versión que en local (pnpm 9 no
+entiende `pnpm-workspace.yaml` —`allowBuilds`/`overrides`— y fallaba con
+"packages field missing or empty").
 
 ### 7.4 Otra deuda técnica (no de seguridad)
 
@@ -222,12 +225,14 @@ pnpm build            # 14.0 → 14.2 no tiene breaking changes relevantes
 
 ### 7.5 Prioridad
 
-| # | Acción | Impacto | Esfuerzo | Prioridad |
-|---|---|---|---|---|
-| 1 | `next@14.2.35` (Fase 1) | Cierra crítica + high runtime | Bajo | 🔴 Ahora |
-| 2 | Migrar toolchain de lint (Fase 3) | Quita ruido transitivo | Medio | 🟠 Pronto |
-| 3 | Salto a Next 15/16 (Fase 2) | Cierra moderate/low residuales | Alto | 🟡 Planificar |
-| 4 | ~~`<img>` → `next/image`~~ ✅, tipado, error boundaries | Calidad/UX | Bajo-Medio | 🟢 Continuo |
+| # | Acción | Impacto | Estado |
+|---|---|---|---|
+| 1 | `next@14.2.35` (Fase 1) | Cierra crítica + high runtime | ✅ Hecho |
+| 2 | Salto a Next 16 (Fase 2) | Cierra moderate/low residuales | ✅ Hecho |
+| 3 | Toolchain de lint → ESLint 9 flat (Fase 3) | Quita ruido transitivo | ✅ Hecho |
+| 4 | ~~`<img>` → `next/image`~~ ✅ | Calidad/UX | ✅ Hecho |
+| 5 | Tipado de respuestas TMDB, `error.tsx`/`not-found.tsx` por ruta | Calidad/UX | 🟢 Pendiente |
+| 6 | Vulns dev-only del toolchain de lint (cuando upstream parchee) | Ruido | 🟢 Pendiente |
 
 ---
 
