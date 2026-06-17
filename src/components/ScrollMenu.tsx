@@ -27,7 +27,7 @@ function ScrollMenu() {
             <li key={items[0]}>
               <Link
                 href={`/?t=${items[0].toLowerCase()}`}
-                className="block rounded px-4 hover:bg-gray-50/20 hover:text-red-300
+                className="block rounded px-4 hover:bg-gray-50/20 hover:text-accent
                 "
               >
                 {items[1]}

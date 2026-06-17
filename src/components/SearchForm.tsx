@@ -21,7 +21,7 @@ export default function SearchForm() {
         name="query"
         placeholder="Matrix, Interstellar..."
       />
-      <button className="rounded  bg-slate-200 p-2 hover:bg-slate-50/25  hover:text-red-300 dark:bg-slate-50/10">
+      <button className="rounded  bg-slate-200 p-2 hover:bg-slate-50/25  hover:text-accent dark:bg-slate-50/10">
         <SearchIcon />
       </button>
     </form>

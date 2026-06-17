@@ -1,6 +1,5 @@
 import { getPopularFilms, getTrendingFilms, getTopRatedFilms } from "@/services/Movies"
 import { type typeCategory, type ResponseMovies } from "../types/movie.type"
-import ListMovies from "@/components/ListMovies"
 import InfiniteMovies from "@/components/InfiniteMovies"
 
 interface Props {
@@ -27,8 +26,8 @@ export default async function Home({ searchParams }: Props) {
 
   return (
     <main className="flex flex-col items-center justify-center ">
-      <h1 className="my-4 text-4xl font-bold text-gray-500 opacity-80">
-        <span className="mr-2 capitalize tracking-tight text-blue-500">{title}</span>
+      <h1 className="my-4 text-4xl font-bold text-subtitle">
+        <span className="mr-2 capitalize tracking-tight text-accent">{title}</span>
         movies
       </h1>
       <InfiniteMovies key={category} initialMovies={data.results} category={category} />

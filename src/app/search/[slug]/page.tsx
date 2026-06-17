@@ -16,7 +16,7 @@ export default async function SearchMovies({ params }: Props) {
   }
   return (
     <main className="flex flex-col items-center justify-center pb-8">
-      <h1 className="my-4 text-4xl font-bold text-red-500">Estas buscando: {search}</h1>
+      <h1 className="my-4 text-4xl font-bold text-title">Estas buscando: {search}</h1>
       <ListMovies movies={data.results} />
     </main>
   )
