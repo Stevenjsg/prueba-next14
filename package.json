@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "15.5.19",
+    "next": "16.2.9",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "zustand": "^5.0.14"
@@ -21,7 +21,7 @@
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "autoprefixer": "^10",
     "eslint": "^8.52.0",
-    "eslint-config-next": "15.5.19",
+    "eslint-config-next": "16.2.9",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "^2.25.2",
