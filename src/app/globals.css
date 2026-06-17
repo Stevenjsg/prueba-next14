@@ -2,20 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-  color-scheme: dark light;
+/*
+ * Design-system color tokens. Registering them as <color> custom properties lets
+ * the browser animate them, so when the global theme store swaps colors (opening
+ * a movie) the whole app cross-fades instead of snapping.
+ */
+@property --grad-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(222 47% 6%);
+}
+@property --grad-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(215 41% 16%);
+}
+@property --grad-3 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(222 40% 9%);
+}
+@property --surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(222 30% 18%);
+}
+@property --accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(0 72% 55%);
+}
+@property --accent-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(0 55% 42%);
+}
+@property --title {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(0 75% 62%);
+}
+@property --subtitle {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(0 0% 100% / 0.45);
+}
+@property --text {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(0 0% 100% / 0.9);
+}
+@property --brand {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: hsl(0 72% 45%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+:root {
+  --grad-1: hsl(222 47% 6%);
+  --grad-2: hsl(215 41% 16%);
+  --grad-3: hsl(222 40% 9%);
+  --surface: hsl(222 30% 18%);
+  --accent: hsl(0 72% 55%);
+  --accent-soft: hsl(0 55% 42%);
+  --title: hsl(0 75% 62%);
+  --subtitle: hsl(0 0% 100% / 0.45);
+  --text: hsl(0 0% 100% / 0.9);
+  --brand: hsl(0 72% 45%);
+  color-scheme: dark;
+  transition:
+    --grad-1 0.7s ease,
+    --grad-2 0.7s ease,
+    --grad-3 0.7s ease,
+    --surface 0.7s ease,
+    --accent 0.7s ease,
+    --accent-soft 0.7s ease,
+    --title 0.7s ease,
+    --subtitle 0.7s ease,
+    --text 0.7s ease,
+    --brand 0.7s ease;
 }
+
+body {
+  min-height: 100vh;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--grad-1) 0%, var(--grad-2) 55%, var(--grad-3) 100%);
+  background-attachment: fixed;
+}
+
 @layer base {
   .text-balance {
     text-wrap: balance;

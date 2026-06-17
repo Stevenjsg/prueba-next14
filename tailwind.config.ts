@@ -9,9 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       darkMode: "class",
+      colors: {
+        surface: "var(--surface)",
+        accent: "var(--accent)",
+        "accent-soft": "var(--accent-soft)",
+        title: "var(--title)",
+        subtitle: "var(--subtitle)",
+        content: "var(--text)",
+        brand: "var(--brand)",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        theme: "linear-gradient(180deg, var(--grad-1) 0%, var(--grad-2) 55%, var(--grad-3) 100%)",
       },
       keyframes: {
         "color-change": {
