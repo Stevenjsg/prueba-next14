@@ -2,7 +2,7 @@
 
 > **Software Design Document**
 > Proyecto: `prueba-next14` (FilmsCenter)
-> Última actualización: 2026-06-16
+> Última actualización: 2026-06-17
 
 ---
 
@@ -13,7 +13,9 @@ FilmsCenter es una aplicación web de catálogo de películas construida sobre
 para listar películas (tendencia, populares, mejor valoradas), mostrar el
 detalle de cada película con sus créditos y permitir búsqueda por título. El
 listado principal implementa **scroll infinito** mediante Server Actions e
-`IntersectionObserver`.
+`IntersectionObserver`. La vista de detalle **re-tinta toda la app** con una
+paleta derivada del póster (degradado + acentos), gestionada por un estado
+global de tematización (§8).
 
 | | |
 |---|---|
@@ -34,7 +36,8 @@ listado principal implementa **scroll infinito** mediante Server Actions e
 | UI | React / React DOM | `^18` |
 | Lenguaje | TypeScript | `^5.2.2` |
 | Estilos | Tailwind CSS + autoprefixer + PostCSS | `^3` |
-| Color extraction | node-vibrant | `^4.0.4` |
+| Estado global | Zustand | `^5.0.14` |
+| Extracción de color | Canvas API (cliente, sin dependencias) | — |
 | Lint/format | ESLint 8 + `eslint-config-standard-with-typescript` + Prettier | ver §7 |
 
 ---
@@ -50,6 +53,10 @@ listado principal implementa **scroll infinito** mediante Server Actions e
 - **Server Actions** (`"use server"`) para la capa de datos: `services/Movies.ts`
   y `actions/getPageMovies.ts`. Esto mantiene la `Authorization` de TMDB en el
   servidor y evita exponer el token al cliente.
+- **Capa de tematización en cliente:** un store Zustand (`store/theme.ts`)
+  guarda la paleta activa y un componente de sincronización la escribe como CSS
+  variables en `:root`. Permite que la app entera se re-tinte por película
+  (detalle §8).
 
 ### 3.2 Flujo de datos (listado principal)
 
@@ -85,7 +92,9 @@ src/
 ├── components/          # UI: ListMovies, MovieCard, InfiniteMovies, NavBar,
 │                        #     SearchForm, TagComponents, CardsCredits, etc.
 ├── icon/                # Iconos SVG como componentes React
-├── services/Movies.ts   # Cliente TMDB (server action) + utils.ts
+├── services/            # Movies.ts (cliente TMDB), palette.ts (extracción de
+│                        #   color en cliente), utils.ts
+├── store/theme.ts       # Estado global de tematización (Zustand)
 ├── actions/             # Server actions de paginación (getPageMovies.ts)
 ├── types/               # movie.type.ts, credits.d.ts
 └── constant.ts          # TMDB_URL, auth header, categorías de menú
@@ -122,9 +131,11 @@ src/
   para evitar duplicados entre páginas de TMDB.
 - **`rootMargin: "200px"`** precarga la siguiente página antes de llegar al
   final del viewport.
-- **Inconsistencia de imágenes:** la home/listado usa `next/image`
-  (optimizado), pero el detalle (`movies/[id]`) usa `<img>` crudo — punto de
-  mejora de rendimiento.
+- **Imágenes unificadas con `next/image`:** toda la app (listado, detalle y
+  créditos) usa `next/image`. El póster del detalle se renderiza vía
+  `PosterTheme` (§8). Se sirven optimizadas y desde el mismo origen
+  (`/_next/image`), lo que además habilita la extracción de color por canvas sin
+  CORS.
 - **Manejo de errores básico:** los servicios hacen `.catch(console.log)` y las
   páginas devuelven `Error 404` / `MovieNotFound` como fallback simple.
 
@@ -200,8 +211,8 @@ pnpm build            # 14.0 → 14.2 no tiene breaking changes relevantes
 
 ### 7.4 Otra deuda técnica (no de seguridad)
 
-- **`<img>` crudo en `movies/[id]`** en lugar de `next/image` → peor LCP y sin
-  optimización. Migrar a `<Image>`.
+- ~~**`<img>` crudo en `movies/[id]`** en lugar de `next/image`~~ ✅ **Resuelto
+  (2026-06-17):** póster y fotos de reparto migrados a `next/image` (§8.6).
 - **Manejo de errores con `console.log`** en `services/Movies.ts`; no hay
   `error.tsx`/`not-found.tsx` por ruta. Añadir boundaries del App Router.
 - **Tipado de respuestas:** `getTrendingFilms`/`getPopularFilms`/... devuelven
@@ -216,57 +227,79 @@ pnpm build            # 14.0 → 14.2 no tiene breaking changes relevantes
 | 1 | `next@14.2.35` (Fase 1) | Cierra crítica + high runtime | Bajo | 🔴 Ahora |
 | 2 | Migrar toolchain de lint (Fase 3) | Quita ruido transitivo | Medio | 🟠 Pronto |
 | 3 | Salto a Next 15/16 (Fase 2) | Cierra moderate/low residuales | Alto | 🟡 Planificar |
-| 4 | `<img>` → `next/image`, tipado, error boundaries | Calidad/UX | Bajo-Medio | 🟢 Continuo |
+| 4 | ~~`<img>` → `next/image`~~ ✅, tipado, error boundaries | Calidad/UX | Bajo-Medio | 🟢 Continuo |
 
 ---
 
-## 8. Feature en desarrollo: tematización dinámica por color dominante
+## 8. Tematización dinámica por color del póster (implementado)
 
-> Objetivo: que la página de detalle (`/movies/[id]`) adapte su paleta (fondo +
-> acentos + texto) a los **colores dominantes del póster**. Ej.: el póster de
-> Matrix → fondo oscuro + acentos verdes. Extracción **server-side** con
-> `node-vibrant@^4.0.4` (ya instalado, §2).
+> Objetivo cumplido: al abrir `/movies/[id]`, **toda la app** adopta una paleta
+> derivada del póster — un degradado vertical **negro → azul → marrón** que sigue
+> al póster, con título, subtítulos y acentos derivados del color más vívido. Al
+> salir, los listados vuelven al tema neutro por defecto.
 
-**Decisión clave — server-side:** la extracción se ejecuta en el RSC de la ruta,
-no en el cliente. Evita el *flash* de color (los valores llegan ya en el HTML) y
-los problemas de CORS al leer píxeles desde `image.tmdb.org`. Los colores se
-inyectan como **CSS variables** (`--bg`, `--accent`, `--text`) en el `<main>`,
-porque son valores dinámicos por película (no conocidos en build-time).
+### 8.1 Cambio de enfoque respecto al plan inicial
 
-> ⚠️ `node-vibrant@4` cambió el import: `import { Vibrant } from "node-vibrant/node"`
-> (en v3 era `import Vibrant from "node-vibrant"`).
+El plan original (extracción **server-side** con `node-vibrant`, CSS vars sólo en
+`<main>`) se **descartó**:
 
-### 8.1 Split 1 — Utilidad de extracción (servidor)
+- `node-vibrant` sólo devuelve *swatches* globales; no puede reproducir el
+  degradado **direccional** (oscuro arriba → color dominante en medio → tonos
+  cálidos abajo) que pedía el diseño.
+- Se quería que el **estado global** guardara la paleta y re-tintara la app
+  completa, algo intrínsecamente de cliente.
 
-- **Nuevo archivo:** `src/services/palette.ts`.
-- Función `getPalette(posterPath)` envuelta en `cache()` de React (memoiza por
-  argumento dentro del render): `fetch` del póster → `Buffer` → `Vibrant.from(buffer).getPalette()`.
-- Mapeo de swatches: `background ← DarkMuted`, `accent ← Vibrant` (fallback
-  `LightVibrant`), `text ← DarkMuted.titleTextColor` (color ya contrastado que
-  da Vibrant).
-- **Fallbacks obligatorios** (`?? "#0a0a0a"` / `"#ffffff"`): los swatches pueden
-  venir `null` en pósters monocromos; `try/catch` para fallos de red.
+Resultado: `node-vibrant` **eliminado** (§2); extracción **en cliente** sobre
+`<canvas>` + **estado global con Zustand** + **design system de tokens CSS**.
 
-### 8.2 Split 2 — Conexión en la ruta `/movies/[id]`
+### 8.2 Extracción de color (cliente) — `src/services/palette.ts`
 
-- En `app/movies/[id]/page.tsx`, tras obtener `data`: `const palette = await getPalette(data.poster_path)`.
-- Inyectar en `<main>` vía `style={{ "--bg", "--accent", "--text" } as React.CSSProperties}`.
+- Módulo puro de cliente (sin dependencias de Node). `extractTheme(img)` dibuja
+  el póster en un `<canvas>` de 64px y lo muestrea por **bandas horizontales**
+  (arriba/medio/abajo) → las tres paradas del degradado, normalizadas a una
+  luminancia objetivo (negro / azul / marrón).
+- El píxel **más vívido** (mayor saturación, luminancia media) define el
+  `accent`; de él se derivan por HSL `title`, `subtitle`, `text`, `surface`,
+  `brand` y `accentSoft`. Incluye guarda para pósters monocromos.
 
-### 8.3 Split 3 — Aplicación en el diseño (con legibilidad)
+### 8.3 Estado global — `src/store/theme.ts` (Zustand)
 
-- Consumir variables: fondo `bg-[var(--bg)]`, texto `text-[var(--text)]`,
-  acentos `text-[var(--accent)]` en título/tags/año.
-- **Legibilidad:** usar siempre `--text` (derivado de `titleTextColor`), nunca
-  blanco fijo, para garantizar contraste si el fondo sale claro.
-- Pasar `--accent` como fondo de `<TagComponents>` con su `titleTextColor` como
-  texto.
+- `useThemeStore` guarda el `Theme` activo (`defaultTheme` neutro para listados).
+- `themeToCssVars(theme)` mapea el `Theme` a las custom properties que consumen
+  Tailwind y `globals.css`.
+- API: `setTheme(theme)` / `reset()`.
 
-### 8.4 Notas y dependencias
+### 8.4 Aplicación al DOM — `ThemeSync` + `PosterTheme`
 
-- Combinar con la deuda **«`<img>` crudo en `movies/[id]` → `next/image`»**
-  (§7.4): al tocar esa ruta, migrar el póster a `<Image>` de paso.
-- Caché entre requests (no solo intra-render): considerar envolver `getPalette`
-  con `unstable_cache` de Next, clave = `poster_path`.
+- `src/components/ThemeSync.tsx` (montado en el `layout`): se suscribe al store y
+  escribe las CSS vars en `document.documentElement` → **re-skin de toda la app**
+  (logo, navbar, búsqueda, tags, fondo).
+- `src/components/PosterTheme.tsx`: renderiza el póster con `next/image`; en
+  `onLoad` ejecuta `setTheme(extractTheme(img))`; en `unmount`, `reset()`.
+
+### 8.5 Design system — `tailwind.config.ts` + `globals.css`
+
+- Tokens semánticos expuestos como utilidades Tailwind: `text-title`,
+  `text-subtitle`, `text-content`, `text-brand`, `bg-accent`, `bg-accent-soft`,
+  `bg-surface` y el degradado `bg-theme`. Sustituyen a los colores hardcodeados.
+- `globals.css`: valores por defecto en `:root`, fondo del `body` con el
+  degradado, y los tokens registrados con `@property … <color>` + `transition`
+  en `:root` para que el cambio de paleta haga **cross-fade (~0.7s)** en vez de
+  saltar.
+
+### 8.6 Imágenes y CORS
+
+- Póster y fotos de reparto usan `next/image`. El optimizador sirve desde
+  `/_next/image` (**mismo origen**), lo que permite leer los píxeles en el canvas
+  **sin CORS** y evita el problema de cabeceras CORS cacheadas de la CDN de TMDB.
+- Por eso se descartaron tanto `crossOrigin="anonymous"` (la CDN cachea sin
+  `Vary: Origin`) como un proxy propio `/api/poster` (redundante: el optimizador
+  ya es el «proxy» de mismo origen).
+
+### 8.7 Compromiso conocido
+
+- Extracción en cliente ⇒ breve instante con el tema por defecto antes de que el
+  póster cargue; el `transition` de 0.7s lo convierte en un *fade* intencional.
 
 ---
 
