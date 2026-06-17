@@ -1,3 +1,8 @@
+# `packages` must be present (even as just the root) so pnpm 9 — which Vercel
+# selects by default — accepts this file instead of failing with
+# "packages field missing or empty". pnpm 10/11 (local) read the settings below.
+packages:
+  - .
 allowBuilds:
   sharp: true
 overrides:
