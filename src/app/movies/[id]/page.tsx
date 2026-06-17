@@ -16,7 +16,7 @@ interface Props {
   }>
 }
 export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
-  const params = await props.params;
+  const params = await props.params
   const { id } = params
   const results = (await getMovisById({ movieId: id })) as Movie
 
@@ -27,7 +27,7 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 }
 
 async function MoviPage(props: Props) {
-  const params = await props.params;
+  const params = await props.params
   const { id } = params
   const data = (await getMovisById({ movieId: id })) as Movie
   const year = formatDate(data.release_date)

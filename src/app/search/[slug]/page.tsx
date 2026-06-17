@@ -8,7 +8,7 @@ interface Props {
   }>
 }
 export default async function SearchMovies(props: Props) {
-  const params = await props.params;
+  const params = await props.params
   const { slug } = params
   const search = slug.replace(/-/g, " ")
   const data = await findMovie({ query: search })

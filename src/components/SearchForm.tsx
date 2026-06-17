@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import SearchIcon from "@/icon/searchIcon"
 import { stringToSlug } from "@/services/utils"
 import { redirect } from "next/navigation"

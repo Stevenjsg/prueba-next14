@@ -15,7 +15,7 @@ const categoryData: Record<string, () => Promise<ResponseMovies>> = {
 }
 
 export default async function Home(props: Props) {
-  const searchParams = await props.searchParams;
+  const searchParams = await props.searchParams
   const category = searchParams.t?.toLowerCase() ?? "trending"
   const getFilms = categoryData[category] ?? getTrendingFilms
   const title = category in categoryData ? category : "trending"
