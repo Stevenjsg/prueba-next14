@@ -3,9 +3,9 @@ import { type typeCategory, type ResponseMovies } from "../types/movie.type"
 import InfiniteMovies from "@/components/InfiniteMovies"
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     t?: typeCategory
-  }
+  }>
 }
 
 const categoryData: Record<string, () => Promise<ResponseMovies>> = {
@@ -14,7 +14,8 @@ const categoryData: Record<string, () => Promise<ResponseMovies>> = {
   torated: getTopRatedFilms,
 }
 
-export default async function Home({ searchParams }: Props) {
+export default async function Home(props: Props) {
+  const searchParams = await props.searchParams;
   const category = searchParams.t?.toLowerCase() ?? "trending"
   const getFilms = categoryData[category] ?? getTrendingFilms
   const title = category in categoryData ? category : "trending"

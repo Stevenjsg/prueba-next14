@@ -9,19 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "14.2.35",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "15.5.19",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "autoprefixer": "^10",
     "eslint": "^8.52.0",
-    "eslint-config-next": "14.2.35",
+    "eslint-config-next": "15.5.19",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "^2.25.2",

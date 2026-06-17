@@ -3,11 +3,12 @@ import MovieNotFound from "@/components/MovieNotFound"
 import { findMovie } from "@/services/Movies"
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
-export default async function SearchMovies({ params }: Props) {
+export default async function SearchMovies(props: Props) {
+  const params = await props.params;
   const { slug } = params
   const search = slug.replace(/-/g, " ")
   const data = await findMovie({ query: search })

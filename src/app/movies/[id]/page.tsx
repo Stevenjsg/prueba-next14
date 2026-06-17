@@ -11,11 +11,12 @@ import PosterTheme from "@/components/PosterTheme"
 const average = Average({ weight: "400", subsets: ["latin"] })
 
 interface Props {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(props: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const params = await props.params;
   const { id } = params
   const results = (await getMovisById({ movieId: id })) as Movie
 
@@ -25,7 +26,8 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
   }
 }
 
-async function MoviPage({ params }: Props) {
+async function MoviPage(props: Props) {
+  const params = await props.params;
   const { id } = params
   const data = (await getMovisById({ movieId: id })) as Movie
   const year = formatDate(data.release_date)

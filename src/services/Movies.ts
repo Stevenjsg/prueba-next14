@@ -9,6 +9,7 @@ export async function getTrendingFilms(page = 1) {
       accept: "application/json",
       Authorization: auth,
     },
+    next: { revalidate: 3600 },
   })
   const data = await response.json()
   return data
@@ -20,6 +21,7 @@ export async function getPopularFilms(page = 1) {
       accept: "application/json",
       Authorization: auth,
     },
+    next: { revalidate: 3600 },
   })
   const data = await response.json()
   return data
@@ -31,6 +33,7 @@ export async function getTopRatedFilms(page = 1) {
       accept: "application/json",
       Authorization: auth,
     },
+    next: { revalidate: 3600 },
   })
   const data = await response.json()
   return data
@@ -43,6 +46,7 @@ export async function getMovisById({ movieId }: { movieId: string }) {
       accept: "application/json",
       Authorization: auth,
     },
+    next: { revalidate: 86400 },
   })
     .then(async (response) => await response.json())
     .catch((error) => {
@@ -56,6 +60,7 @@ export async function findMovie({ query }: { query: string }) {
       accept: "application/json",
       Authorization: auth,
     },
+    cache: "no-store",
   })
     .then(async (response) => await response.json())
     .catch((error) => {
@@ -69,6 +74,7 @@ export async function getCreditsToIdMovie(movieId: number): Promise<Credits> {
     headers: {
       Authorization: auth,
     },
+    next: { revalidate: 86400 },
   })
     .then(async (response) => await response.json())
     .catch((error) => {
