@@ -3,11 +3,10 @@ import { type Movie } from "@/types/movie.type"
 import TagComponents from "@/components/TagComponents"
 import { getMovisById } from "@/services/Movies"
 import { Average } from "next/font/google"
-import Image from "next/image"
 
-import React from "react"
 import { formatDate } from "@/services/utils"
 import CardsCredits from "@/components/CardsCredits"
+import PosterTheme from "@/components/PosterTheme"
 
 const average = Average({ weight: "400", subsets: ["latin"] })
 
@@ -35,8 +34,8 @@ async function MoviPage({ params }: Props) {
       <section className="relative mx-auto grid w-[80%] grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-x-2 overflow-y-hidden">
         <aside className="relative flex flex-col">
           <picture className="relative block h-[500px] w-auto animate-fade-in lg:h-[600px]">
-            <img
-              className="absolute inset-0 h-full w-full object-contain"
+            <PosterTheme
+              className="object-contain"
               src={`https://image.tmdb.org/t/p/w500/${data.poster_path}`}
               alt={data.title}
             />
@@ -51,12 +50,12 @@ async function MoviPage({ params }: Props) {
           </article>
         </aside>
         <article className="flex flex-col items-center gap-y-2 px-2">
-          <h1 className="text-balance text-4xl font-bold">{data.title}</h1>
-          <h2 className="text-balance text-center text-2xl font-semibold tracking-tight text-black/40 dark:text-white/40 md:text-2xl">
+          <h1 className="text-balance text-4xl font-bold text-title">{data.title}</h1>
+          <h2 className="text-balance text-center text-2xl font-semibold tracking-tight text-subtitle md:text-2xl">
             {data.tagline}
           </h2>
-          <p className="font-semibold opacity-40">{`${data.status} - ${year}`}</p>
-          <p className={`${average.className} text-base md:text-lg lg:text-xl`}>{data.overview}</p>
+          <p className="font-semibold text-subtitle">{`${data.status} - ${year}`}</p>
+          <p className={`${average.className} text-content md:text-lg lg:text-xl`}>{data.overview}</p>
           <CardsCredits id={data.id} />
         </article>
       </section>
